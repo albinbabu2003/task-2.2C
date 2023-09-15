@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelBookingPro - Proof of Concept</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.js"></script>
+    <style>
+        /* Reset some default styles */
+        body, h1, h2, ul, li, p, form, button {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Apply a background color and center content */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Style the main container */
+        #app {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        /* Style headers */
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #555;
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Style forms and labels */
+        form {
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Style buttons */
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Style lists */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Style booking information */
+        #app p {
+            color: #333;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Welcome to HotelBookingPro</h1>
+        
+        <h2>Add a New Hotel</h2>
+        <form @submit.prevent="addHotel">
+            <label for="hotelName">Hotel Name:</label>
+            <input type="text" id="hotelName" v-model="newHotel.name" required>
+            
+            <label for="hotelPrice">Price per Night ($):</label>
+            <input type="number" id="hotelPrice" v-model="newHotel.price" required>
+            
+            <button type="submit">Add Hotel</button>
+        </form>
+
+        <h2>Add User Details</h2>
+        <form @submit.prevent="addUser">
+            <label for="userName">User Name:</label>
+            <input type="text" id="userName" v-model="newUser.name" required>
+            
+            <label for="userEmail">Email:</label>
+            <input type="email" id="userEmail" v-model="newUser.email" required>
+            
+            <button type="submit">Add User</button>
+        </form>
+        
+        <h2>Available Hotels</h2>
+        <ul>
+            <li v-for="hotel in hotels" :key="hotel.name">
+                {{ hotel.name }} - ${{ hotel.price }}/night
+                <button @click="selectHotel(hotel)">Select</button>
+            </li>
+        </ul>
+
+        <h2>Booking Information</h2>
+        <form @submit.prevent="bookHotel">
+            <label for="selectedHotel">Selected Hotel:</label>
+            <select id="selectedHotel" v-model="selectedBooking.hotel">
+                <option v-for="hotel in selectedHotels" :value="hotel">{{ hotel.name }}</option>
+            </select>
+
+            <label for="stayDuration">Number of Days to Stay:</label>
+            <input type="number" id="stayDuration" v-model="selectedBooking.duration" required>
+
+            <button type="submit">Book Hotel</button>
+        </form>
+        
+        <h2>Current Booking</h2>
+        <p v-if="currentBooking.hotel">Hotel: {{ currentBooking.hotel.name }}</p>
+        <p v-if="currentBooking.duration">Stay Duration: {{ currentBooking.duration }} days</p>
+    </div>
+    
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    hotels: [
+                        { name: "Hotel A", price: 100 },
+                        { name: "Hotel B", price: 120 },
+                        { name: "Hotel C", price: 80 },
+                    ],
+                    newHotel: {
+                        name: "",
+                        price: null,
+                    },
+                    users: [],
+                    newUser: {
+                        name: "",
+                        email: "",
+                    },
+                    selectedBooking: {
+                        hotel: null,
+                        duration: null,
+                    },
+                    currentBooking: {},
+                };
+            },
+            methods: {
+                addHotel() {
+                    if (this.newHotel.name && this.newHotel.price) {
+                        this.hotels.push({ name: this.newHotel.name, price: this.newHotel.price });
+                        this.newHotel.name = "";
+                        this.newHotel.price = null;
+                    }
+                },
+                addUser() {
+                    if (this.newUser.name && this.newUser.email) {
+                        this.users.push({ name: this.newUser.name, email: this.newUser.email });
+                        this.newUser.name = "";
+                        this.newUser.email = "";
+                    }
+                },
+                selectHotel(hotel) {
+                    this.selectedBooking.hotel = hotel;
+                },
+                bookHotel() {
+                    if (this.selectedBooking.hotel && this.selectedBooking.duration) {
+                        this.currentBooking = { ...this.selectedBooking };
+                        this.selectedBooking.hotel = null;
+                        this.selectedBooking.duration = null;
+                    }
+                },
+            },
+            computed: {
+                selectedHotels() {
+                    return this.hotels.filter((hotel) => hotel !== this.currentBooking.hotel);
+                },
+            },
+        });
+
+        app.mount("#app");
+    </script>
+</body>
+</html>
