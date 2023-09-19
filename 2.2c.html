@@ -3,212 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HotelBookingPro - Proof of Concept</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.js"></script>
-    <style>
-        /* Reset some default styles */
-        body, h1, h2, ul, li, p, form, button {
-            margin: 0;
-            padding: 0;
-        }
+    <title>Hotel Reservation</title>
+<style>
+    body {
+        background-color: #f5f5f5;
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-        /* Apply a background color and center content */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            text-align: center;
-            padding: 20px;
-        }
+    header {
+        background-color: #007BFF;
+        padding: 20px 0;
+        text-align: center;
+    }
 
-        /* Style the main container */
-        #app {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            margin: 0 auto;
-            max-width: 800px;
-        }
+    header h1 {
+        margin: 0;
+        font-size: 36px;
+        color: #fff;
+    }
 
-        /* Style headers */
-        h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
+    nav {
+        margin-top: 20px;
+        text-align: center;
+    }
 
-        h2 {
-            color: #555;
-            font-size: 24px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
+    nav a {
+        color: #007BFF;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 18px;
+    }
 
-        /* Style forms and labels */
-        form {
-            margin-top: 10px;
-        }
+    nav a:hover {
+        text-decoration: underline;
+    }
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+    .content {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
 
-        input[type="text"],
-        input[type="number"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
 
-        /* Style buttons */
-        button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
 
-        button:hover {
-            background-color: #555;
-        }
+    button[type="submit"] {
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+    }
 
-        /* Style lists */
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
 
-        li {
-            margin-bottom: 5px;
-        }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
 
-        /* Style booking information */
-        #app p {
-            color: #333;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-    </style>
+    ul li {
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+    footer {
+        background-color: #007BFF;
+        text-align: center;
+        padding: 10px 0;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        color: #fff;
+    }
+</style>
 </head>
 <body>
     <div id="app">
-        <h1>Welcome to HotelBookingPro</h1>
+        <header>
+            <h1>Hotel Reservation</h1>
+            <nav>
+                <router-link to="/room-selection">Room Selection</router-link>
+                <router-link to="/name">Name</router-link>
+                <router-link to="/payment">Payment</router-link>
+                <router-link to="/confirmation">Confirmation</router-link>
+            </nav>
+        </header>
         
-        <h2>Add a New Hotel</h2>
-        <form @submit.prevent="addHotel">
-            <label for="hotelName">Hotel Name:</label>
-            <input type="text" id="hotelName" v-model="newHotel.name" required>
-            
-            <label for="hotelPrice">Price per Night ($):</label>
-            <input type="number" id="hotelPrice" v-model="newHotel.price" required>
-            
-            <button type="submit">Add Hotel</button>
-        </form>
-
-        <h2>Add User Details</h2>
-        <form @submit.prevent="addUser">
-            <label for="userName">User Name:</label>
-            <input type="text" id="userName" v-model="newUser.name" required>
-            
-            <label for="userEmail">Email:</label>
-            <input type="email" id="userEmail" v-model="newUser.email" required>
-            
-            <button type="submit">Add User</button>
-        </form>
-        
-        <h2>Available Hotels</h2>
-        <ul>
-            <li v-for="hotel in hotels" :key="hotel.name">
-                {{ hotel.name }} - ${{ hotel.price }}/night
-                <button @click="selectHotel(hotel)">Select</button>
-            </li>
-        </ul>
-
-        <h2>Booking Information</h2>
-        <form @submit.prevent="bookHotel">
-            <label for="selectedHotel">Selected Hotel:</label>
-            <select id="selectedHotel" v-model="selectedBooking.hotel">
-                <option v-for="hotel in selectedHotels" :value="hotel">{{ hotel.name }}</option>
-            </select>
-
-            <label for="stayDuration">Number of Days to Stay:</label>
-            <input type="number" id="stayDuration" v-model="selectedBooking.duration" required>
-
-            <button type="submit">Book Hotel</button>
-        </form>
-        
-        <h2>Current Booking</h2>
-        <p v-if="currentBooking.hotel">Hotel: {{ currentBooking.hotel.name }}</p>
-        <p v-if="currentBooking.duration">Stay Duration: {{ currentBooking.duration }} days</p>
+        <router-view></router-view>
     </div>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3.5.2/dist/vue-router.js"></script>
     <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    hotels: [
-                        { name: "Hotel A", price: 100 },
-                        { name: "Hotel B", price: 120 },
-                        { name: "Hotel C", price: 80 },
-                    ],
-                    newHotel: {
-                        name: "",
-                        price: null,
-                    },
-                    users: [],
-                    newUser: {
-                        name: "",
-                        email: "",
-                    },
-                    selectedBooking: {
-                        hotel: null,
-                        duration: null,
-                    },
-                    currentBooking: {},
-                };
-            },
-            methods: {
-                addHotel() {
-                    if (this.newHotel.name && this.newHotel.price) {
-                        this.hotels.push({ name: this.newHotel.name, price: this.newHotel.price });
-                        this.newHotel.name = "";
-                        this.newHotel.price = null;
-                    }
-                },
-                addUser() {
-                    if (this.newUser.name && this.newUser.email) {
-                        this.users.push({ name: this.newUser.name, email: this.newUser.email });
-                        this.newUser.name = "";
-                        this.newUser.email = "";
-                    }
-                },
-                selectHotel(hotel) {
-                    this.selectedBooking.hotel = hotel;
-                },
-                bookHotel() {
-                    if (this.selectedBooking.hotel && this.selectedBooking.duration) {
-                        this.currentBooking = { ...this.selectedBooking };
-                        this.selectedBooking.hotel = null;
-                        this.selectedBooking.duration = null;
-                    }
-                },
-            },
-            computed: {
-                selectedHotels() {
-                    return this.hotels.filter((hotel) => hotel !== this.currentBooking.hotel);
-                },
-            },
+        // Define components for different sections
+        const RoomSelection = {
+            template: `
+                <div class="content">
+                    <h1>Room Selection</h1>
+                    <form>
+                        <label for="checkIn">Check-In Date:</label>
+                        <input type="date" id="checkIn" required>
+
+                        <label for="checkOut">Check-Out Date:</label>
+                        <input type="date" id="checkOut" required>
+
+                        <label for="roomType">Room Type:</label>
+                        <select id="roomType" required>
+                            <option value="standard">Standard Room</option>
+                            <option value="deluxe">Deluxe Room</option>
+                            <option value="suite">Suite</option>
+                        </select>
+
+                        <router-link to="/name"><button type="button">Next</button></router-link>
+                    </form>
+                </div>
+            `,
+        };
+
+        const Name = {
+            template: `
+                <div class="content">
+                    <h1>Name</h1>
+                    <form>
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+
+                        <router-link to="/payment"><button type="button">Next</button></router-link>
+                    </form>
+                </div>
+            `,
+        };
+
+        const Payment = {
+            template: `
+                <div class="content">
+                    <h1>Payment</h1>
+                    <form>
+                        <label for="cardNumber">Card Number:</label>
+                        <input type="text" id="cardNumber" placeholder="Enter your card number" required>
+
+                        <label for="expirationDate">Expiration Date:</label>
+                        <input type="text" id="expirationDate" placeholder="MM/YY" required>
+
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" placeholder="Enter CVV" required>
+
+                        <router-link to="/confirmation"><button type="button">Pay Now</button></router-link>
+                    </form>
+                </div>
+            `,
+        };
+
+        const Confirmation = {
+            template: `
+                <div class="content">
+                    <h1>Confirmation</h1>
+                    <p>Your reservation has been confirmed. Thank you for choosing our hotel!</p>
+                </div>
+            `,
+        };
+
+        // Create Vue Router instance and configure routes
+        const router = new VueRouter({
+            routes: [
+                { path: '/room-selection', component: RoomSelection },
+                { path: '/name', component: Name },
+                { path: '/payment', component: Payment },
+                { path: '/confirmation', component: Confirmation },
+                { path: '/', redirect: '/room-selection' }, // Redirect to Room Selection by default
+            ],
         });
 
-        app.mount("#app");
+        const app = new Vue({
+            router,
+        }).$mount('#app');
     </script>
+
+    <main>
+        <!-- You can add more content here -->
+    </main>
+    <footer>
+        <p>&copy; 2023 Hotel Reservation</p>
+    </footer>
 </body>
 </html>
